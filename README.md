@@ -12,14 +12,14 @@ Using an ESP8266, allow users with press a button to send a rebellion "bat signa
 
 ## Wiring
 ### ESP8266 ("ESP")
-* GPIO5:  D1  <--> MD12    
-* GPIO4:  D2  <--> MD11       
-* GPIO0:  D3  <--> MD10      
-* GPIO2:  D4  <--> MD9        
-* GPIO14: D5  <--> Red LED   
+* GPIO5:  D1  <--> MD12
+* GPIO4:  D2  <--> MD11
+* GPIO0:  D3  <--> MD10
+* GPIO2:  D4  <--> MD9
+* GPIO14: D5  <--> Red LED
 * GPIO12: D6  <--> Green LED
-* GPIO13: D7  <--> Button 1  
-* GPIO15: D8  <--> Button 2  
+* GPIO13: D7  <--> Button 2
+* GPIO15: D8  <--> Button 1
 * Vin         <--> 5V
 * GND         <--> GND
 
