@@ -28,7 +28,8 @@ char auth[] = BLYNK_AUTH_TOKEN;
 
 // Variables
 bool isMotorSpinning = false;
-int motorSpeed = 0;
+int motorSpinSpeed = 128;
+int motorStopSpeed = 0;
 
 BlynkTimer timer;
 
@@ -45,20 +46,20 @@ BLYNK_WRITE(V0)
     digitalWrite(greenLedPin, HIGH);
     digitalWrite(redLedPin, LOW);
     isMotorSpinning = true;
-    analogWrite(motorPWMPin, 255);
+    analogWrite(motorPWMPin, motorSpinSpeed);
   }
   else if (value == 0) {
     Serial.println("Stopping Motor");
     digitalWrite(greenLedPin, LOW);
     digitalWrite(redLedPin, HIGH);
     isMotorSpinning = false;
-    analogWrite(motorPWMPin, 0);
+    analogWrite(motorPWMPin, motorStopSpeed);
   }
   else {
     Serial.println("Something went wrong with V0");
     Serial.print("Value: ");
     Serial.println(value);
-    analogWrite(motorPWMPin, 0);
+    analogWrite(motorPWMPin, motorStopSpeed);
   }
 
   Blynk.virtualWrite(V1, value);
@@ -79,6 +80,7 @@ BLYNK_WRITE(V4)
 // This function is called every time the device is connected to the Blynk.Cloud
 BLYNK_CONNECTED()
 {
+  Serial.println("Connected to Blynk Cloud.");
   // Change Web Link Button message to "Congratulations!"
   Blynk.setProperty(V3, "offImageUrl", "https://static-image.nyc3.cdn.digitaloceanspaces.com/general/fte/congratulations.png");
   Blynk.setProperty(V3, "onImageUrl",  "https://static-image.nyc3.cdn.digitaloceanspaces.com/general/fte/congratulations_pressed.png");
@@ -114,12 +116,22 @@ void setup()
 
   // Debug console
   Serial.begin(115200);
+  Serial.println("\nStart program.");
 
+  
   Blynk.begin(auth, ssid, pass);
+  int time_delay = 1000;
+  unsigned long last_time = millis();
+  while (Blynk.connect()) {
+    if (millis() - last_time > time_delay){
+      Serial.print(".");
+    }
+  }
+  
   // You can also specify server:
   //Blynk.begin(auth, ssid, pass, "blynk.cloud", 80);
   //Blynk.begin(auth, ssid, pass, IPAddress(192,168,1,100), 8080);
-
+  
   // Setup a function to be called every second
   timer.setInterval(1000L, myTimerEvent);
 }
