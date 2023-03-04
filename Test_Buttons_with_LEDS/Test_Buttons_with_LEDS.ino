@@ -22,6 +22,11 @@
   https://www.arduino.cc/en/Tutorial/BuiltInExamples/Button
 */
 
+// INCLUDES
+#include "Arduino.h"
+#include "MyClasses.h"
+
+
 // CONSTANTS
 const int button1Pin = 15;     // the number of the pushbutton pin
 const int button2Pin = 13;     // the number of the pushbutton pin
@@ -40,25 +45,36 @@ int lastButtonState = LOW;    // stores the last button state
 unsigned long lastDebounceTime = 0;
 
 
+LED greenLED(greenLedPin);
+Button button(button1Pin);
+
 // FUNCTIONS
 void setup() {
   Serial.begin(115200);
-  
+
+  /*
   // initialize the LED pins as an output:
   pinMode(greenLedPin, OUTPUT);
   pinMode(redLedPin, OUTPUT);
   // initialize the pushbutton pins as an input:
   pinMode(button1Pin, INPUT);
   pinMode(button2Pin, INPUT);
-
+  */
+  
   Serial.println("\nSetup Complete");
 }
 
 
 void loop() {
   // Check if the button was pressed
-  buttonPressedCheck(button1State, button1Pin, greenLedPin);
+  //buttonPressedCheck(button1State, button1Pin, greenLedPin);
+  button.ButtonPressedCheck(greenLED);
 }
+
+
+
+/*******************************************************************/
+
 
 
 void buttonPressedCheck(int buttonState, int buttonPin, int ledPin) {
