@@ -8,6 +8,7 @@ class LED {
         LED(int pin);
         int state = LOW;
         void toggleState();
+    
     private:
         int _pin;
 };
@@ -16,6 +17,7 @@ class Button {
     public:
         Button(int pin);
         void ButtonPressedCheck(LED led);
+    
     private: 
         int _pin;
         int _stateCurrent = LOW;

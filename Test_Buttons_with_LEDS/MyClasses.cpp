@@ -11,24 +11,20 @@ void Button::ButtonPressedCheck(LED led) {
   // 2. Ignores bouncy signals
   
   _reading = digitalRead(_pin);
-  //Serial.print("Current Reading: ");
-  //Serial.println(_reading);
-
-  //Serial.print("Pin: ");
-  //Serial.println(_pin);
 
   if (_reading != _stateLast) {
+    // Reset debounce timer when state changes
     _lastDebounceTime = millis();
-    Serial.print("Button state changed. Current Reading: ");
-    Serial.println(_reading);
   }
 
+
+  // Ignore any state changes below debounce delay
   if ((millis() - _lastDebounceTime) > _debounceDelay) {    
+    // Update the state if it has changed
     if (_reading != _stateCurrent) {
       _stateCurrent = _reading;
-      Serial.print("Button pressed! Button State: ");
-      Serial.println(_stateCurrent);
       
+      // Act on the button press
       onButtonPressed(led);
     }
   }
@@ -38,7 +34,6 @@ void Button::ButtonPressedCheck(LED led) {
 void Button::onButtonPressed(LED led) {
   // Toggle the LED state after releasing the button.
   if (_stateCurrent == LOW) {
-    Serial.println("Toggle LED Pin.");
     led.toggleState();
   }
 }
