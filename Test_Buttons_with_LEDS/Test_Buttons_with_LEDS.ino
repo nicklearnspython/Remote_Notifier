@@ -22,43 +22,70 @@
   https://www.arduino.cc/en/Tutorial/BuiltInExamples/Button
 */
 
-// constants won't change. They're used here to set pin numbers:
+// CONSTANTS
 const int button1Pin = 15;     // the number of the pushbutton pin
 const int button2Pin = 13;     // the number of the pushbutton pin
-const int greenLedPin =  12;      // the number of the LED pin
-const int redLedPin =  14;      // the number of the LED pin
+const int greenLedPin =  12;   // the number of the LED pin
+const int redLedPin =  14;     // the number of the LED pin
+
+const unsigned long debounceDelay = 50; 
+
+// VARIABLES
+int button1State = LOW;         // variable for reading the pushbutton status
+int button2State = LOW;         // variable for reading the pushbutton status
+
+int buttonReading = LOW;      // reads current button status
+int lastButtonState = LOW;    // stores the last button state
+
+unsigned long lastDebounceTime = 0;
 
 
-// variables will change:
-int button1State = 0;         // variable for reading the pushbutton status
-int button2State = 0;         // variable for reading the pushbutton status
-
+// FUNCTIONS
 void setup() {
+  Serial.begin(115200);
+  
   // initialize the LED pins as an output:
   pinMode(greenLedPin, OUTPUT);
   pinMode(redLedPin, OUTPUT);
   // initialize the pushbutton pins as an input:
   pinMode(button1Pin, INPUT);
   pinMode(button2Pin, INPUT);
+
+  Serial.println("\nSetup Complete");
 }
+
 
 void loop() {
-  // read the state of the pushbutton value:
-  button1State = digitalRead(button1Pin);
-  button2State = digitalRead(button2Pin);
-
-  buttonPressedCheck(button1State, greenLedPin);
-  buttonPressedCheck(button2State, redLedPin);
-  
+  // Check if the button was pressed
+  buttonPressedCheck(button1State, button1Pin, greenLedPin);
 }
 
-void buttonPressedCheck(bool buttonState, int ledPin) {
-  // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
-  if (buttonState == HIGH) {
-    // turn LED on:
-    digitalWrite(ledPin, HIGH);
-  } else {
-    // turn LED off:
-    digitalWrite(ledPin, LOW);
+
+void buttonPressedCheck(int buttonState, int buttonPin, int ledPin) {
+  buttonReading = digitalRead(buttonPin);
+
+  if (buttonReading != lastButtonState) {
+    lastDebounceTime = millis();
+    Serial.print("Button state changed. Current Reading: ");
+    Serial.println(buttonReading);
   }
+
+  if ((millis() - lastDebounceTime) > debounceDelay) {    
+    if (buttonReading != button1State) {
+      button1State = buttonReading;
+      Serial.print("Button pressed! Button State: ");
+      Serial.println(button1State);
+      if (button1State == LOW) {
+        Serial.println("Toggle LED Pin.");
+        toggleLEDState(ledPin);
+      }
+    }
+  }
+  lastButtonState = buttonReading;
+}
+
+
+void toggleLEDState(int ledPin) {
+  // Reads state of LED pin and outputs the opposite
+  digitalWrite(ledPin, !digitalRead(ledPin));
 }
