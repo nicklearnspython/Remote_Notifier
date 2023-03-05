@@ -1,4 +1,7 @@
-// CLASSES
+////////////////////
+// --- BUTTON --- //
+////////////////////
+
 Button::Button(int pin) {
     _pin = pin;
   pinMode(_pin, INPUT);
@@ -18,25 +21,41 @@ void Button::ButtonPressedCheck(LED led) {
 
   // Ignore any state changes below debounce delay
   if ((millis() - _lastDebounceTime) > _debounceDelay) {    
-    // Update the state if it has changed
+    // Update the button state if it has changed
     if (_reading != _stateCurrent) {
       _stateCurrent = _reading;
       
-      // Act on the button press
-      onButtonPressed(led);
+      
+      if (_stateCurrent == HIGH) {
+        onButtonPressed(led);
+      }
+      
+      if (_stateCurrent == LOW) {
+        onButtonReleased(led);
+      }
+      
     }
   }
   _stateLast = _reading;
 }
 
+
 void Button::onButtonPressed(LED led) {
-  // Toggle the LED state after releasing the button.
-  if (_stateCurrent == LOW) {
-    led.toggleState();
-    Blynk.virtualWrite(V0, led.getState());
-  }
+  // Toggle the LED state after pressing the button.
+  // Nothing for now. 
 }
 
+
+void Button::onButtonReleased(LED led) {
+  // Toggle the LED state after releasing the button.
+  Blynk.virtualWrite(V0, !led.getState());
+  led.toggleState();
+}
+
+
+/////////////////
+// --- LED --- //
+/////////////////
 
 LED::LED(int pin) {
   _pin = pin;
@@ -46,16 +65,23 @@ LED::LED(int pin) {
 
 
 void LED::toggleState() {
-  Serial.print("Current State: ");
-  Serial.print(getState());
-  
   _state = !digitalRead(_pin);
   digitalWrite(_pin, _state);
-  
-  Serial.print(", New State: ");
-  Serial.println(digitalRead(_pin));
 }
 
+
 int LED::getState() {
-  return _state;
+  return digitalRead(_pin);
+}
+
+
+void LED::enable() {
+  _state = HIGH;
+  digitalWrite(_pin, _state);
+}
+
+
+void LED::disable() {
+  _state = LOW;
+  digitalWrite(_pin, _state);
 }

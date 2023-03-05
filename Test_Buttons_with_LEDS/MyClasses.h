@@ -1,8 +1,5 @@
 #ifndef MyClasses_h
 #define MyClasses_h
-//#ifndef BLYNK
-//  #include <BlynkSimpleEsp8266.h>
-//#endif
 
 #include "Arduino.h"
 
@@ -11,6 +8,8 @@ class LED {
         LED(int pin);
         void toggleState();
         int getState();
+        void enable();
+        void disable();
     
     private:
         int _pin;
@@ -32,6 +31,7 @@ class Button {
         unsigned long _debounceDelay = 50;
 
         void onButtonPressed(LED led);
+        void onButtonReleased(LED led);
 };
 
 #endif 
