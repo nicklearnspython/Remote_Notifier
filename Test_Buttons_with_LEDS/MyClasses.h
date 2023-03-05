@@ -6,11 +6,12 @@
 class LED {
     public:
         LED(int pin);
-        int state = LOW;
         void toggleState();
+        int getState();
     
     private:
         int _pin;
+        int _state = LOW;
 };
 
 class Button {
