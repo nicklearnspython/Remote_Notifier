@@ -1,5 +1,8 @@
 #ifndef MyClasses_h
 #define MyClasses_h
+//#ifndef BLYNK
+//  #include <BlynkSimpleEsp8266.h>
+//#endif
 
 #include "Arduino.h"
 
@@ -13,6 +16,7 @@ class LED {
         int _pin;
         int _state = LOW;
 };
+
 
 class Button {
     public:
