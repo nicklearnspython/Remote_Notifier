@@ -7,10 +7,19 @@
   
 */
 
+//DEFINE
+#define BLYNK_TEMPLATE_ID "TMPL9j58_7SZ"
+#define BLYNK_TEMPLATE_NAME "RemoteNotifierTemplate"
+#define BLYNK_PRINT Serial // Comment this out to disable prints and save space.
+#define USE_NODE_MCU_BOARD
+
 
 // INCLUDES
+#include "Credentials.h"
 #include "Arduino.h"
 #include "MyClasses.h"
+#include <ESP8266WiFi.h>
+#include <BlynkSimpleEsp8266.h>
 
 
 // CONSTANTS
@@ -24,12 +33,41 @@ Button button(button1Pin);
 
 
 // FUNCTIONS
+
+BLYNK_CONNECTED()
+{
+  Serial.println("We are connected to the cloud!");
+  //Blynk.syncAll();
+}
+
+
+BLYNK_WRITE(V0)
+{
+  int CloudBatSignalState = param.asInt(); // get new value
+  if (CloudBatSignalState == 1){
+    Serial.println("Bat Signal is Enabled!");
+    greenLED.enable();
+  }
+  else if (CloudBatSignalState == 0) {
+    Serial.println("Bat Signal is Disabled!");
+    greenLED.disable();
+  }
+  else {
+    Serial.print("ERROR: Bat Signal value is very wrong.");
+  }
+}
+
+
 void setup() {
   Serial.begin(115200);
+  Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass);
   Serial.println("\nSetup Complete");
 }
 
+
 void loop() {
+  Blynk.run();
+  
   // Check if the button was pressed
   button.ButtonPressedCheck(greenLED);
 }

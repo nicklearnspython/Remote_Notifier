@@ -6,12 +6,16 @@
 class LED {
     public:
         LED(int pin);
-        int state = LOW;
         void toggleState();
+        int getState();
+        void enable();
+        void disable();
     
     private:
         int _pin;
+        int _state = LOW;
 };
+
 
 class Button {
     public:
@@ -27,6 +31,7 @@ class Button {
         unsigned long _debounceDelay = 50;
 
         void onButtonPressed(LED led);
+        void onButtonReleased(LED led);
 };
 
 #endif 
