@@ -10,17 +10,16 @@
 //DEFINE
 #define BLYNK_TEMPLATE_ID "TMPL9j58_7SZ"
 #define BLYNK_TEMPLATE_NAME "RemoteNotifierTemplate"
-#define BLYNK_AUTH_TOKEN "aqRWdthHO_svl0VcbP9QfH2N8iCTVdrz"
 #define BLYNK_PRINT Serial // Comment this out to disable prints and save space.
 #define USE_NODE_MCU_BOARD
 
 
 // INCLUDES
-#include <ESP8266WiFi.h>
-#include <BlynkSimpleEsp8266.h>
+#include "Credentials.h"
 #include "Arduino.h"
 #include "MyClasses.h"
-#include "Credentials.h"
+#include <ESP8266WiFi.h>
+#include <BlynkSimpleEsp8266.h>
 
 
 // CONSTANTS

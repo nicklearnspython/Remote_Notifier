@@ -1,6 +1,8 @@
 //Credentials.h
 
+// Blynk Authentication Token
+#define BLYNK_AUTH_TOKEN "YourAuthToken"
+
 // Your WiFi credentials.
-// Set password to "" for open networks.
-char ssid[] = "Robot";
-char pass[] = "scrub-a-dub";
+char ssid[] = "YourNetworkName";
+char pass[] = "YourPassword";
