@@ -37,7 +37,7 @@ Button button(button1Pin);
 BLYNK_CONNECTED()
 {
   Serial.println("We are connected to the cloud!");
-  //Blynk.syncAll();
+  Blynk.syncVirtual(V0); // Sync hardware with the cloud.
 }
 
 
