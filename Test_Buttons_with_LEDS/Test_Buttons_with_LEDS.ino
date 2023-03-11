@@ -28,6 +28,7 @@ const int button2Pin = 13;     // the number of the pushbutton pin
 const int greenLedPin =  12;   // the number of the LED pin
 const int redLedPin =  14;     // the number of the LED pin
 
+SystemState systemState;
 LED greenLED(greenLedPin);
 Button button(button1Pin);
 
@@ -46,10 +47,12 @@ BLYNK_WRITE(V0)
   int CloudBatSignalState = param.asInt(); // get new value
   if (CloudBatSignalState == 1){
     Serial.println("Bat Signal is Enabled!");
+    systemState.setEnabled();
     greenLED.enable();
   }
   else if (CloudBatSignalState == 0) {
     Serial.println("Bat Signal is Disabled!");
+    systemState.setDisabled();
     greenLED.disable();
   }
   else {
@@ -69,5 +72,5 @@ void loop() {
   Blynk.run();
   
   // Check if the button was pressed
-  button.ButtonPressedCheck(greenLED);
+  button.ButtonPressedCheck(greenLED, systemState);
 }

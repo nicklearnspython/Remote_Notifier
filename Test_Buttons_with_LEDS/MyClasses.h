@@ -3,6 +3,26 @@
 
 #include "Arduino.h"
 
+enum systemStates {
+    DISABLED,     // Bat Signal dark
+    ENABLED,      // Bat Signal Ignited!
+    ACKNOWLEDGED  // Bat Signal Acknowledged
+};
+
+
+class SystemState{
+    public:
+        SystemState();
+        void setDisabled();
+        void setEnabled();
+        void setAcknowledged();
+        int checkState();
+
+    private:
+        enum systemStates _systemState;
+};
+    
+
 class LED {
     public:
         LED(int pin);
@@ -20,7 +40,7 @@ class LED {
 class Button {
     public:
         Button(int pin);
-        void ButtonPressedCheck(LED led);
+        void ButtonPressedCheck(LED &led, SystemState &systemState);
     
     private: 
         int _pin;
@@ -30,8 +50,9 @@ class Button {
         unsigned long _lastDebounceTime = 0;
         unsigned long _debounceDelay = 50;
 
-        void onButtonPressed(LED led);
-        void onButtonReleased(LED led);
+        void onButtonPressed(LED &led, SystemState &systemState);
+        void onButtonReleased(LED &led, SystemState &systemState);
 };
+
 
 #endif 
