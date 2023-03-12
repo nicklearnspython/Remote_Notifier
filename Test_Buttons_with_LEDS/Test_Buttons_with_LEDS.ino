@@ -27,10 +27,14 @@ const int button1Pin  = 15;   // the number of the pushbutton pin
 const int button2Pin  = 13;   // the number of the pushbutton pin
 const int greenLedPin =  12;  // the number of the LED pin
 const int redLedPin   =  14;  // the number of the LED pin
+const int yellowLedPin =  2;  // the number of the LED pin
+const int blueLedPin   =  0;  // the number of the LED pin
 
 SystemState systemState;
-LED NotifierLED(greenLedPin);    // green --> Attention Grabber
-LED globalStateMirrorLED(redLedPin);        // red   --> Mirrors Global State
+LED NotifierLED(greenLedPin);         // green  --> Attention Grabber
+LED globalStateMirrorLED(redLedPin);  // red    --> Mirrors Global State
+LED Bro1AckLED(blueLedPin);           // Blue   --> Brother 1 Acknowledgement Status
+LED Bro2AckLED(yellowLedPin);         // Yellow --> Brother 2 Acknowledgement Status
 Button button(button1Pin);
 
 
@@ -39,11 +43,15 @@ Button button(button1Pin);
 BLYNK_CONNECTED()
 {
   Serial.println("We are connected to the cloud!");
-  Blynk.syncVirtual(V0); // Sync hardware with the cloud.
+
+  // Sync hardware with the cloud.
+  Blynk.syncVirtual(V0); 
+  Blynk.syncVirtual(V1); 
+  Blynk.syncVirtual(V2);
 }
 
 
-BLYNK_WRITE(V0)
+BLYNK_WRITE(V0) // Bat Signal Status
 {
   int CloudBatSignalState = param.asInt(); // get new value
   if (CloudBatSignalState == 1){
@@ -61,6 +69,30 @@ BLYNK_WRITE(V0)
   }
   else {
     Serial.print("ERROR: Bat Signal value is very wrong.");
+  }
+}
+
+
+BLYNK_WRITE(V2) // Older Brother Acknowledgement Status
+{
+  int AcknowledgementStatusB1 = param.asInt(); // get new value
+  if (AcknowledgementStatusB1 == 1){
+    Bro1AckLED.enable();
+  }
+  else {
+    Bro1AckLED.disable();
+  }
+}
+
+
+BLYNK_WRITE(V3) // Myself Acknowledgement Status
+{
+  int AcknowledgementStatusB2 = param.asInt(); // get new value
+  if (AcknowledgementStatusB2 == 1){
+    Bro2AckLED.enable();
+  }
+  else {
+    Bro2AckLED.disable();
   }
 }
 
