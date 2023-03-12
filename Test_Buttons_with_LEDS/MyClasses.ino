@@ -38,7 +38,7 @@ Button::Button(int pin) {
 }
 
 
-void Button::ButtonPressedCheck(LED &led, SystemState &systemState) {
+void Button::ButtonPressedCheck(LED &globalStateLed, LED &notifierLed, SystemState &systemState) {
   // 1. Determines if the button has been pressed
   // 2. Ignores bouncy signals
   
@@ -58,11 +58,11 @@ void Button::ButtonPressedCheck(LED &led, SystemState &systemState) {
       
       
       if (_stateCurrent == HIGH) {
-        onButtonPressed(led, systemState);
+        onButtonPressed(globalStateLed, notifierLed, systemState);
       }
       
       if (_stateCurrent == LOW) {
-        onButtonReleased(led, systemState);
+        onButtonReleased(globalStateLed, notifierLed, systemState);
       }
       
     }
@@ -71,26 +71,24 @@ void Button::ButtonPressedCheck(LED &led, SystemState &systemState) {
 }
 
 
-void Button::onButtonPressed(LED &led, SystemState &systemState) {
+void Button::onButtonPressed(LED &globalStateLed, LED &notifierLed, SystemState &systemState) {
   // Toggle the LED state after pressing the button.
   // Nothing for now. 
 }
 
 
-void Button::onButtonReleased(LED &led, SystemState &systemState) {
+void Button::onButtonReleased(LED &globalStateLed, LED &notifierLed, SystemState &systemState) {
   // Toggle the LED state after releasing the button.
-  Serial.print("Current state: ");
-  Serial.println(systemState.checkState());
   int currentState = systemState.checkState();
 
   switch (currentState) {
     case DISABLED:
       // if disabled, send the Bat Signal!!
-      // Then go to the acknowledged state
-      Blynk.virtualWrite(V0, !led.getState());
-      Serial.println("DISABLED --> ACKNOWLEDGED");
-      systemState.setAcknowledged();
-      led.disable();
+      // Then go to the Enabled state
+      Serial.println("DISABLED --> ENABLED");
+      systemState.setEnabled();
+      globalStateLed.enable();
+      notifierLed.enable();
       Blynk.virtualWrite(V0, HIGH);
       break;
     
@@ -99,7 +97,7 @@ void Button::onButtonReleased(LED &led, SystemState &systemState) {
       // Disable main notifior, but leave notifier signal enabled 
       Serial.println("ENABLED --> ACKNOWLEDGED");
       systemState.setAcknowledged();
-      led.disable();
+      notifierLed.disable();
       break;
       
     case ACKNOWLEDGED:

@@ -40,7 +40,8 @@ class LED {
 class Button {
     public:
         Button(int pin);
-        void ButtonPressedCheck(LED &led, SystemState &systemState);
+        void ButtonPressedCheck(LED &globalStateLed, LED &notifierLed, SystemState &systemState);
+        
     
     private: 
         int _pin;
@@ -50,8 +51,8 @@ class Button {
         unsigned long _lastDebounceTime = 0;
         unsigned long _debounceDelay = 50;
 
-        void onButtonPressed(LED &led, SystemState &systemState);
-        void onButtonReleased(LED &led, SystemState &systemState);
+        void onButtonPressed(LED &globalStateLed, LED &notifierLed, SystemState &systemState);
+        void onButtonReleased(LED &globalStateLed, LED &notifierLed, SystemState &systemState);
 };
 
 

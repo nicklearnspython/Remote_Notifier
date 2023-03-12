@@ -23,13 +23,14 @@
 
 
 // CONSTANTS
-const int button1Pin = 15;     // the number of the pushbutton pin
-const int button2Pin = 13;     // the number of the pushbutton pin
-const int greenLedPin =  12;   // the number of the LED pin
-const int redLedPin =  14;     // the number of the LED pin
+const int button1Pin  = 15;   // the number of the pushbutton pin
+const int button2Pin  = 13;   // the number of the pushbutton pin
+const int greenLedPin =  12;  // the number of the LED pin
+const int redLedPin   =  14;  // the number of the LED pin
 
 SystemState systemState;
-LED greenLED(greenLedPin);
+LED NotifierLED(greenLedPin);    // green --> Attention Grabber
+LED globalStateMirrorLED(redLedPin);        // red   --> Mirrors Global State
 Button button(button1Pin);
 
 
@@ -48,12 +49,14 @@ BLYNK_WRITE(V0)
   if (CloudBatSignalState == 1){
     Serial.println("Bat Signal is Enabled!");
     systemState.setEnabled();
-    greenLED.enable();
+    globalStateMirrorLED.enable();
+    NotifierLED.enable();
   }
   else if (CloudBatSignalState == 0) {
     Serial.println("Bat Signal is Disabled!");
     systemState.setDisabled();
-    greenLED.disable();
+    globalStateMirrorLED.disable();
+    NotifierLED.disable();
   }
   else {
     Serial.print("ERROR: Bat Signal value is very wrong.");
@@ -72,5 +75,5 @@ void loop() {
   Blynk.run();
   
   // Check if the button was pressed
-  button.ButtonPressedCheck(greenLED, systemState);
+  button.ButtonPressedCheck(globalStateMirrorLED, NotifierLED, systemState);
 }
