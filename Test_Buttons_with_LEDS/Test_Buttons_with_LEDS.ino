@@ -57,6 +57,7 @@ BLYNK_WRITE(V0)
     systemState.setDisabled();
     globalStateMirrorLED.disable();
     NotifierLED.disable();
+    Blynk.virtualWrite(V1, LOW);
   }
   else {
     Serial.print("ERROR: Bat Signal value is very wrong.");

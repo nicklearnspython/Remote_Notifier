@@ -89,7 +89,7 @@ void Button::onButtonReleased(LED &globalStateLed, LED &notifierLed, SystemState
       systemState.setEnabled();
       globalStateLed.enable();
       notifierLed.enable();
-      Blynk.virtualWrite(V0, HIGH);
+      Blynk.virtualWrite(V0, HIGH); // V0 = Is Bat Signal Enabled
       break;
     
     case ENABLED:
@@ -98,6 +98,7 @@ void Button::onButtonReleased(LED &globalStateLed, LED &notifierLed, SystemState
       Serial.println("ENABLED --> ACKNOWLEDGED");
       systemState.setAcknowledged();
       notifierLed.disable();
+      Blynk.virtualWrite(V1, HIGH); // V1 = Is Acknowledged 
       break;
       
     case ACKNOWLEDGED:
@@ -109,9 +110,6 @@ void Button::onButtonReleased(LED &globalStateLed, LED &notifierLed, SystemState
       // Uknown state. Send an error!
       break;
   }
-  
-  //Blynk.virtualWrite(V0, !led.getState());
-  //led.toggleState();
 }
 
 
