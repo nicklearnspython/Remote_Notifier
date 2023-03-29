@@ -30,7 +30,8 @@ const int redLedPin   =  14;  // the number of the LED pin
 const int yellowLedPin =  2;  // the number of the LED pin
 const int blueLedPin   =  0;  // the number of the LED pin
 
-SystemState systemState;
+LocalSystemState localSystemState;
+GlobalSystemState globalSystemState;
 LED NotifierLED(greenLedPin);         // green  --> Attention Grabber
 LED globalStateMirrorLED(redLedPin);  // red    --> Mirrors Global State
 LED Bro1AckLED(blueLedPin);           // Blue   --> Brother 1 Acknowledgement Status
@@ -57,13 +58,13 @@ BLYNK_WRITE(V0) // Bat Signal Status
   int CloudBatSignalState = param.asInt(); // get new value
   if (CloudBatSignalState == 1){
     Serial.println("Bat Signal is Enabled!");
-    systemState.setEnabled();
+    localSystemState.setEnabled();
     globalStateMirrorLED.enable();
     NotifierLED.enable();
   }
   else if (CloudBatSignalState == 0) {
     Serial.println("Bat Signal is Disabled!");
-    systemState.setDisabled();
+    localSystemState.setDisabled();
     globalStateMirrorLED.disable();
     NotifierLED.disable();
     Blynk.virtualWrite(V1, LOW);
@@ -78,6 +79,7 @@ BLYNK_WRITE(V2) // Older Brother Acknowledgement Status
 {
   int AcknowledgementStatusB1 = param.asInt(); // get new value
   if (AcknowledgementStatusB1 == 1){
+    globalSystemState.Bro1Acknowledged();
     Bro1AckLED.enable();
   }
   else {
@@ -90,6 +92,7 @@ BLYNK_WRITE(V3) // Myself Acknowledgement Status
 {
   int AcknowledgementStatusB2 = param.asInt(); // get new value
   if (AcknowledgementStatusB2 == 1){
+    globalSystemState.Bro2Acknowledged();
     Bro2AckLED.enable();
   }
   else {
@@ -109,5 +112,5 @@ void loop() {
   Blynk.run();
   
   // Check if the button was pressed
-  button.ButtonPressedCheck(globalStateMirrorLED, NotifierLED, systemState);
+  button.ButtonPressedCheck(globalStateMirrorLED, NotifierLED, localSystemState);
 }

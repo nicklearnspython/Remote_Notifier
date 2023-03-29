@@ -1,30 +1,76 @@
-///////////////////////////
-// --- STATE MACHINE --- //
-///////////////////////////
+/////////////////////////////////
+// --- LOCAL STATE MACHINE --- //
+/////////////////////////////////
 
-SystemState::SystemState(){
+LocalSystemState::LocalSystemState(){
   // initialize system state machine
   _systemState = DISABLED;
 }
 
 
-void SystemState::setDisabled() {
+void LocalSystemState::setDisabled() {
   _systemState = DISABLED;
 }
 
 
-void SystemState::setEnabled() {
+void LocalSystemState::setEnabled() {
   _systemState = ENABLED;
 }
 
 
-void SystemState::setAcknowledged() {
+void LocalSystemState::setAcknowledged() {
   _systemState = ACKNOWLEDGED;
 }
 
 
-int SystemState::checkState() {
+int LocalSystemState::checkState() {
   return _systemState;
+}
+
+
+//////////////////////////////////
+// --- GLOBAL STATE MACHINE --- //
+//////////////////////////////////
+
+GlobalSystemState::GlobalSystemState() {
+  _hasMiddleBrotherAcknowledged = false;
+  _hasOlderBrotherAcknowledged = false;
+}
+
+
+void GlobalSystemState::Bro1Acknowledged() {
+  Serial.println("Older Bro Ack");
+  _hasOlderBrotherAcknowledged = true;
+  CheckAllAcknowledged();
+}
+
+
+void GlobalSystemState::Bro2Acknowledged() {
+  Serial.println("Middle Bro Ack");
+  _hasMiddleBrotherAcknowledged = true;
+  CheckAllAcknowledged();
+}
+
+
+void GlobalSystemState::CheckAllAcknowledged() {
+  // Check if everyone has acknowldeged. If so, send a disabled state to global.
+  if (_hasMiddleBrotherAcknowledged == true && _hasOlderBrotherAcknowledged == true) {
+    Serial.println("Everyone Ack");
+    // Everyone has acknowledged! Let's watch Star Wars!
+    Blynk.virtualWrite(V0, LOW); // V0 = Is Bat Signal Enabled
+    Blynk.syncVirtual(V0);
+
+    ResetAcknowledgementStates(); 
+    
+    // This solution works only if all devices are online. Otherwise, it will not run
+    // syncVirtual(V0) and its light will remain lit for everyone. 
+  }
+}
+
+
+void GlobalSystemState::ResetAcknowledgementStates() {
+  _hasOlderBrotherAcknowledged = false;
+  _hasMiddleBrotherAcknowledged = false;
 }
 
 
@@ -38,7 +84,7 @@ Button::Button(int pin) {
 }
 
 
-void Button::ButtonPressedCheck(LED &globalStateLed, LED &notifierLed, SystemState &systemState) {
+void Button::ButtonPressedCheck(LED &globalStateLed, LED &notifierLed, LocalSystemState &localSystemState) {
   // 1. Determines if the button has been pressed
   // 2. Ignores bouncy signals
   
@@ -58,11 +104,11 @@ void Button::ButtonPressedCheck(LED &globalStateLed, LED &notifierLed, SystemSta
       
       
       if (_stateCurrent == HIGH) {
-        onButtonPressed(globalStateLed, notifierLed, systemState);
+        onButtonPressed(globalStateLed, notifierLed, localSystemState);
       }
       
       if (_stateCurrent == LOW) {
-        onButtonReleased(globalStateLed, notifierLed, systemState);
+        onButtonReleased(globalStateLed, notifierLed, localSystemState);
       }
       
     }
@@ -71,22 +117,22 @@ void Button::ButtonPressedCheck(LED &globalStateLed, LED &notifierLed, SystemSta
 }
 
 
-void Button::onButtonPressed(LED &globalStateLed, LED &notifierLed, SystemState &systemState) {
+void Button::onButtonPressed(LED &globalStateLed, LED &notifierLed, LocalSystemState &localSystemState) {
   // Toggle the LED state after pressing the button.
   // Nothing for now. 
 }
 
 
-void Button::onButtonReleased(LED &globalStateLed, LED &notifierLed, SystemState &systemState) {
+void Button::onButtonReleased(LED &globalStateLed, LED &notifierLed, LocalSystemState &localSystemState) {
   // Toggle the LED state after releasing the button.
-  int currentState = systemState.checkState();
+  int currentState = localSystemState.checkState();
 
   switch (currentState) {
     case DISABLED:
       // if disabled, send the Bat Signal!!
       // Then go to the Enabled state
       Serial.println("DISABLED --> ENABLED");
-      systemState.setEnabled();
+      localSystemState.setEnabled();
       globalStateLed.enable();
       notifierLed.enable();
       Blynk.virtualWrite(V0, HIGH); // V0 = Is Bat Signal Enabled
@@ -96,7 +142,7 @@ void Button::onButtonReleased(LED &globalStateLed, LED &notifierLed, SystemState
       // If enabled, Acknowledge the signal. 
       // Disable main notifior, but leave notifier signal enabled 
       Serial.println("ENABLED --> ACKNOWLEDGED");
-      systemState.setAcknowledged();
+      localSystemState.setAcknowledged();
       notifierLed.disable();
       Blynk.virtualWrite(V1, HIGH); // V1 = Is Acknowledged 
       break;

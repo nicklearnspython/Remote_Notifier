@@ -10,9 +10,9 @@ enum systemStates {
 };
 
 
-class SystemState{
+class LocalSystemState {
     public:
-        SystemState();
+        LocalSystemState();
         void setDisabled();
         void setEnabled();
         void setAcknowledged();
@@ -22,6 +22,20 @@ class SystemState{
         enum systemStates _systemState;
 };
     
+
+class GlobalSystemState {
+    public:
+        GlobalSystemState();
+        void Bro1Acknowledged();
+        void Bro2Acknowledged();
+        void CheckAllAcknowledged();
+        void ResetAcknowledgementStates();
+
+    private:
+        int _hasMiddleBrotherAcknowledged;
+        int _hasOlderBrotherAcknowledged;
+};
+
 
 class LED {
     public:
@@ -40,7 +54,7 @@ class LED {
 class Button {
     public:
         Button(int pin);
-        void ButtonPressedCheck(LED &globalStateLed, LED &notifierLed, SystemState &systemState);
+        void ButtonPressedCheck(LED &globalStateLed, LED &notifierLed, LocalSystemState &systemState);
         
     
     private: 
@@ -51,8 +65,8 @@ class Button {
         unsigned long _lastDebounceTime = 0;
         unsigned long _debounceDelay = 50;
 
-        void onButtonPressed(LED &globalStateLed, LED &notifierLed, SystemState &systemState);
-        void onButtonReleased(LED &globalStateLed, LED &notifierLed, SystemState &systemState);
+        void onButtonPressed(LED &globalStateLed, LED &notifierLed, LocalSystemState &systemState);
+        void onButtonReleased(LED &globalStateLed, LED &notifierLed, LocalSystemState &systemState);
 };
 
 
