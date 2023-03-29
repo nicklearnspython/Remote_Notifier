@@ -48,6 +48,7 @@ BLYNK_CONNECTED()
   Blynk.syncVirtual(V0); 
   Blynk.syncVirtual(V1); 
   Blynk.syncVirtual(V2);
+  Blynk.syncVirtual(V3);
 }
 
 
